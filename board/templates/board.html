@@ -1,0 +1,70 @@
+
+<title>
+    {% extends 'flatpages/default.html' %}
+</title>
+
+{% load castom_tags %}
+
+
+
+{% block title %}
+board
+{% endblock title %}
+
+{% block content %}
+
+    <h1>Все статьи</h1>
+    <h3>{% current_time '%b %d %Y' %}</h3>
+    <h3>{{ next_sale|default_if_none:"Чуть позже сообщим о свежих новостях!" }}</h3>
+    <hr>
+        {%  if board %}
+            <table> <!— Начинаем описывать таблицу —>
+                <tr> <!— Добавляем строку —>
+                    <td>ID статьи</td>
+                    <td>Дата</td>
+                    <td>Статья</td>
+                    <td>Текст</td>
+                    <td>Автор</td>
+                    <td>Категории</td>
+
+                    {% for post in board %}
+                        <tr>
+                            <td>{{ post.id }}</td>
+                            <td>{{ post.dateCreation|date:"d.M.Y" }}</td>
+                            <td><a class="nav-link" href="/board/{{post.id}}">{{ post.title }}  </a></td>
+                            <td>{{ post.text|truncatechars:20  }}</td>
+                            <td>{{ post.author.User }}</td>
+                            {% for cate in post.postCategory.all %}
+                                <td><a class="nav-link" href="{% url 'category_list' cate.id %}">{{ cate.name }}  </a></td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tr> <!— Не забываем закрыть HTML-тег строки —>
+            </table> <!— ... и таблицы —>
+        {% else %}
+            <h2>Новостей нет!</h2>
+        {% endif %}
+         {# Добавляем пагинацию на страницу #}
+
+        {# Информация о предыдущих страницах #}
+        {% if page_obj.has_previous %}
+           <a href="?{% url_replace page=1 %}">1</a>
+           {% if page_obj.previous_page_number != 1 %}
+               ...
+               <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+           {% endif %}
+        {% endif %}
+
+        {# Информация о текущей странице #}
+        {{ page_obj.number }}
+
+        {# Информация о следующих страницах #}
+        {% if page_obj.has_next %}
+           <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+           {% if paginator.num_pages != page_obj.next_page_number %}
+               ...
+               <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+           {% endif %}
+        {% endif %}
+
+{% endblock content %}
