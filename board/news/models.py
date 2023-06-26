@@ -17,7 +17,7 @@ class Post(models.Model):
     postCategory = models.ManyToManyField(Category, through='PostCategory')
     title = models.CharField(max_length=128, unique=True)
     text = models.TextField()
-    upload = models.FileField(upload_to='uploads/')
+    upload = models.FileField(upload_to='uploads/', default=None)
     # art = Post.objects.first()
     # art.upload.url #для отображения картинки в шаблоне
 

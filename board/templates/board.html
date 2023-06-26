@@ -17,9 +17,9 @@ board
     <h3>{% current_time '%b %d %Y' %}</h3>
     <h3>{{ next_sale|default_if_none:"Чуть позже сообщим о свежих новостях!" }}</h3>
     <hr>
-        {%  if board %}
-            <table> <!— Начинаем описывать таблицу —>
-                <tr> <!— Добавляем строку —>
+        {% if board %}
+            <table>
+                <tr>
                     <td>ID статьи</td>
                     <td>Дата</td>
                     <td>Статья</td>
