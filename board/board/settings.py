@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     #'django_apscheduler',
 
+
     ]
 
 LOGIN_URL = '/accounts/login/'
