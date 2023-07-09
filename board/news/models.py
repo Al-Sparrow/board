@@ -8,13 +8,13 @@ class Category(models.Model):
     name = models.CharField(max_length=64, unique=True)
 
     def __str__(self):
-        return self.name.title()
+        return self.name
 
 
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     dateCreation = models.DateTimeField(auto_now_add=True)
-    postCategory = models.ManyToManyField(Category, through='PostCategory')
+    postCategory = models.ManyToManyField(Category) # through='PostCategory')
     title = models.CharField(max_length=128, unique=True)
     text = models.TextField()
     upload = models.FileField(upload_to='uploads/', default=None)
@@ -33,10 +33,6 @@ class Post(models.Model):
     def __str__(self):
         return f'{self.title}'
 
-
-class PostCategory(models.Model):
-    postThrough = models.ForeignKey(Post, on_delete=models.CASCADE)
-    categoryThrough = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 
 class Response(models.Model):

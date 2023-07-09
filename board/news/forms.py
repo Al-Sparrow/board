@@ -11,6 +11,7 @@ class PostForm(forms.ModelForm):
             'title',
             'text',
             'postCategory',
+            'upload',
         ]
 
     def clean(self):

@@ -21,7 +21,13 @@
                     <td>{{ post.dateCreation|date:"d.M.Y H:i" }}</td>
                 </h2>
             <tr>
-            <td>{{ post.text }}</td>
+            <h4><td>{{ post.text }}</td></h4>
+            {% if post.upload %}
+                <ul>
+                <img src="{{ MEDIA_URL }}{{ post.upload.url }}"/>
+<!--                    <li>{{ post.upload }}</li>-->
+                </ul>
+            {% endif %}
             {% if is_author %}
                 {% for comment in post.comment %}
                     <h2>

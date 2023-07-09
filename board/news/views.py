@@ -1,4 +1,6 @@
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+
+from .filters import PostFilter
 from .models import Post, Response, User, Category
 from django.urls import reverse_lazy, reverse
 from django.http import HttpResponse
@@ -32,6 +34,11 @@ class PostSearch(LoginRequiredMixin, ListView):
     context_object_name = 'Search'
     paginate_by = 5
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.filterset = PostFilter(self.request.GET, queryset)
+    #     # Возвращаем из функции отфильтрованный список товаров
+        return self.filterset.qs
 
 
     def get_context_data(self, **kwargs):
