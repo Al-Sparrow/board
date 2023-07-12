@@ -1,7 +1,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{% extends 'flatpages/default.html' %}</title>
-    {% load profanity %}
+
 </head>
 
     {% block title %}
@@ -23,7 +23,7 @@
                     <tr>
                         <td>{{ response.resp_post.title }}</td>
                         <td>{{ response.resp_author }}</td>
-                        <td>{{ response.text|censor }}</td>
+                        <td>{{ response.text }}</td>
                         <td>{{ response.dateCreation|date:"d.M.Y" }}</td>
                     </tr>
                 {% endfor %}
@@ -36,7 +36,7 @@
     </h3>
 
     <tr>
-        <td style="text-align: left;"> <a class="nav-link" href="/news/{{news_default.id}}/comment/">Оставить комментарий </a>
+        <td style="text-align: left;"> <a class="nav-link" href="/board/{{post.id}}/response/">Оставить комментарий </a>
     </tr>
     {% endblock content %}
 

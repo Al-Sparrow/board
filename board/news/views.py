@@ -63,6 +63,7 @@ class PostDetail(LoginRequiredMixin, DetailView):
     def get_context_data(self, *args, **kwargs):
         context_detail = super().get_context_data(**kwargs)
         context_detail['is_author'] = Post.objects.filter(author=self.request.user) #self.request.user.username.get(username=Post.author.username).exists()
+
         return context_detail
 
 
@@ -93,19 +94,19 @@ class PostDelete(LoginRequiredMixin, DeleteView):
     raise_exception = True
     model = Post
     template_name = 'post_delete.html'
-    success_url = reverse_lazy('post_list')
+    success_url = reverse_lazy('board')
 
 
 class ResponsePost (LoginRequiredMixin, CreateView):
     form_class = ResponseForm
     model = Response
-    template_name = 'response.html'
+    template_name = 'response_edit.html'
     context_object_name = 'response'
 
 
     def form_valid(self, Form):
-        Form.instance.resp_post = Post.objects.get(id=int(self.kwargs['pk'])).id
-        Form.instance.resp_author = self.request.user.id
+        Form.instance.resp_post = Post.objects.get(id=self.kwargs['pk'])
+        Form.instance.resp_author = self.request.user
         return super().form_valid(Form)
 
 

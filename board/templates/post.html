@@ -29,12 +29,24 @@
                 </ul>
             {% endif %}
             {% if is_author %}
-                {% for comment in post.comment %}
-                    <h2>
-                        <td>{{ comment.text }}</td>
-                        <td>{{ comment.dateCreation|date:"d.M.Y H:i" }}</td>
-                    </h2>
-                {% endfor %}
+                {% if post.response_set.all %}
+                    <table>
+                        <tr> <!— Добавляем строку —>
+                        <td>Автор</td>
+                        <td>Комментарий</td>
+                        <td>Дата</td>
+
+                        {% for response in post.response_set.all %}
+                            <tr>
+                                <td>{{ response.text}}</td>
+                                <td>{{ response.dateCreation|date:"d.M.Y" }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tr> <!— Не забываем закрыть HTML-тег строки —>
+                    </table>
+                {% else %}
+                    <h3>Комментариев нет!</h3>
+                {% endif %}
                 <tr>
                     <td style="text-align: left;"> <a class="nav-link" href="/board/{{post.id}}/delete/">Удалить объявление? </a>
                     <td style="text-align: left;"> <a class="nav-link" href="/board/{{post.id}}/update/">Редактировать объявление </a>
@@ -48,7 +60,7 @@
 
 
     <tr>
-        <td style="text-align: left;"> <a class="nav-link" href="/board/{{post.id}}/comment/">Оставить комментарий </a>
+        <td style="text-align: left;"> <a class="nav-link" href="/board/{{post.id}}/response/">Оставить комментарий </a>
     </tr>
 
 
