@@ -33,9 +33,9 @@ board
                             <td>{{ post.dateCreation|date:"d.M.Y" }}</td>
                             <td><a class="nav-link" href="/board/{{post.id}}">{{ post.title }}  </a></td>
                             <td>{{ post.text|truncatechars:20  }}</td>
-                            <td>{{ post.author.User }}</td>
+                            <td>{{ post.author }}</td>
                             {% for cate in post.postCategory.all %}
-                                <td><a class="nav-link" href="{% url 'category_list' cate.id %}">{{ cate.name }}  </a></td>
+                                <td>{{ cate.name }}</td>
                             {% endfor %}
                         </tr>
                     {% endfor %}

@@ -1,0 +1,59 @@
+<head>
+    <meta charset="UTF-8">
+    <title>{% extends 'flatpages/default.html' %}</title>
+
+</head>
+
+{% block title %}
+    <h1>
+        responses
+    </h1>
+{% endblock title %}
+{% block content %}
+
+    <h1>Поиск</h1>
+        <form action="" method="get">
+            {{ filterset.form.as_p }}
+            <input type="submit" value="Найти" />
+        </form>
+    <hr>
+
+        {% if responses %}
+            <table>
+                <tr>
+                    {% for post in responses %}
+                        <tr><td><h2><a class="nav-link" href="/board/{{post.id}}"> {{ post.title|truncatechars:50 }}</a></h2></td></tr>
+                        {% if post.response_set.all %}
+                            <td>Отклики</td>
+                                <tr>
+                                    <td>Автор</td>
+                                    <td>Текст отклика</td>
+                                    <td>Время написания</td>
+                                </tr>
+                                    {% for response in post.response_set.all %}
+                                        <tr>
+                                            <td>{{ response.resp_author }}</td>
+                                            <td>{{ response.resp_text }}</td>
+                                            <td>{{ response.resp_dateCreation|date:"d.M.Y" }}</td>
+                                            {% if response.status is False %}
+                                                <td><a class="nav-link" href="/board/responses/{{response.id}}/delete">Удалить отклик</a></td>
+                                                <td><a class="nav-link" href="/board/responses/{{response.id}}/saveresp">Сохранить отклик</a></td>
+                                            {% else %}
+                                                <td>Отклик принят</td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                        {% else %}
+                            <td>Откликов еще нет!</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            </table>
+        {% else %}
+            <h3>Откликов нет!</h3>
+        {% endif %}
+
+
+
+{% endblock content %}
+

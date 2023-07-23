@@ -1,7 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Post, User, Response
-from django.core.cache import cache
 
 
 class PostForm(forms.ModelForm):
@@ -36,11 +35,11 @@ class ResponseForm(forms.ModelForm):
     class Meta:
         model = Response
         fields = [
-            'text',
+            'resp_text',
         ]
 
     def clean(self):
         cleaned_data = super().clean()
-        text = cleaned_data.get('text')
+        text = cleaned_data.get('resp_text')
 
         return cleaned_data

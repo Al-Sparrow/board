@@ -1,13 +1,11 @@
+from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-
 from .filters import PostFilter
-from .models import Post, Response, User, Category
+from .models import Post, Response, User
 from django.urls import reverse_lazy, reverse
-from django.http import HttpResponse
 from .forms import PostForm, ResponseForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.shortcuts import get_object_or_404
-from django.core.cache import cache
+from django.shortcuts import get_object_or_404, render
 from datetime import datetime
 
 
@@ -17,8 +15,6 @@ class PostList(LoginRequiredMixin, ListView):
     template_name = 'board.html'
     context_object_name = 'board'
     paginate_by = 5
-
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -37,9 +33,7 @@ class PostSearch(LoginRequiredMixin, ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         self.filterset = PostFilter(self.request.GET, queryset)
-    #     # Возвращаем из функции отфильтрованный список товаров
         return self.filterset.qs
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -48,41 +42,22 @@ class PostSearch(LoginRequiredMixin, ListView):
 
 
 class PostDetail(LoginRequiredMixin, DetailView):
+    model = Post
     template_name = 'post.html'
     context_object_name = 'post'
-    queryset = Post.objects.all()
-
-    # def get_object(self, *args, **kwargs):
-    #     obj = cache.get(f'post {self.kwargs["pk"]}', None)
-    #
-    #     if not obj:
-    #         obj = super().get_object(queryset=self.queryset)
-    #         cache.set(f'post_{self.kwargs["pk"]}', obj)
-    #     return obj
-
-    def get_context_data(self, *args, **kwargs):
-        context_detail = super().get_context_data(**kwargs)
-        context_detail['is_author'] = Post.objects.filter(author=self.request.user) #self.request.user.username.get(username=Post.author.username).exists()
-
-        return context_detail
 
 
 class PostCreate(LoginRequiredMixin, CreateView):
-    # permission_required = ('news.add_post',)
-    # raise_exception = True
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
 
     def form_valid(self, Form):
-        # authorUser = self.request.user.objects.get(id=int(self.kwargs['pk']))
         Form.instance.author = User.objects.get(username=self.request.user)
         return super().form_valid(Form)
 
 
-
 class PostUpdate(LoginRequiredMixin, UpdateView):
-    # permission_required = ('news.change_post',)
     raise_exception = True
     form_class = PostForm
     model = Post
@@ -90,7 +65,6 @@ class PostUpdate(LoginRequiredMixin, UpdateView):
 
 
 class PostDelete(LoginRequiredMixin, DeleteView):
-    # permission_required = ('news.delete_post',)
     raise_exception = True
     model = Post
     template_name = 'post_delete.html'
@@ -103,24 +77,43 @@ class ResponsePost (LoginRequiredMixin, CreateView):
     template_name = 'response_edit.html'
     context_object_name = 'response'
 
-
     def form_valid(self, Form):
         Form.instance.resp_post = Post.objects.get(id=self.kwargs['pk'])
         Form.instance.resp_author = self.request.user
         return super().form_valid(Form)
 
 
-class CategoryListView(PostList):
+class ResponseList (LoginRequiredMixin, ListView):
     model = Post
-    template_name = 'category_list.html'
-    context_object_name = 'category_list'
-    def get_queryset(self):
-        self.category = get_object_or_404(Category, id=self.kwargs['pk'])
-        queryset = Post.objects.filter(postCategory=self.category).order_by('-dateCreation')
-        return queryset
+    template_name = 'responses.html'
+    context_object_name = 'responses'
 
-    def get_context_data(self, **kwargs):
+    def get_queryset(self):
+        queryset = Post.objects.filter(author=self.request.user).all()
+        self.filterset = PostFilter(self.request.GET, queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, *arg,  **kwargs):
         context = super().get_context_data(**kwargs)
-        context['is_not_subscriber'] = self.request.user not in self.category.subscribe.all()
-        context['category'] = self.category
+        context['filterset'] = self.filterset
         return context
+
+
+class ResponseDelete(LoginRequiredMixin, DeleteView):
+    raise_exception = True
+    model = Response
+    template_name = 'response_delete.html'
+    success_url = reverse_lazy('responses')
+
+
+@login_required
+def response_accept(request, pk):
+    resp_context = Response.objects.get(id=pk)
+    if resp_context.status == False:
+        resp_context.status = True
+        resp_context.save(update_fields=['status'])
+        message = "Вы ответили на отклик:"
+    else:
+        message = "Вы уже ответили на этот отклик!"
+    return render(request, 'saveresp.html', {'response': resp_context, 'message': message})
+

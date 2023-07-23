@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+        <title>{% extends 'flatpages/default.html' %}
+
+        </title>
+  </head>
+  <body>
+  {% block content %}
+    <h1>Удаление отклика</h1>
+    <hr>
+    <form action="" method="post">
+        {% csrf_token %}
+        <p>Удаляем "{{ object.resp_text }}"?</p>
+        <input type="submit" value="Delete" />
+    </form>
+    {% endblock content %}
+  </body>
+</html>

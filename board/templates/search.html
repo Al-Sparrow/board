@@ -22,8 +22,7 @@
                         <td>Дата</td>
                         <td>Статья</td>
                         <td>Текст</td>
-                        <td>Автор</td>
-
+                        <td>Категория</td>
                         {% for post in Search %}
                             <tr>
                                 <td>{{ post.id }}</td>
@@ -31,6 +30,9 @@
                                 <td> <a class="nav-link" href="/board/{{post.id}}">{{ post.title }}  </a></td>
                                 <td>{{ post.text|truncatechars:20  }}</td>
                                 <td>{{ post.author.authorUser }}</td>
+                                <td>{% for cat in post.postCategory.all %}
+                                    {{ cat.name }}
+                                {% endfor %}</td>
                             </tr>
                         {% endfor %}
                     </tr> <!— Не забываем закрыть HTML-тег строки —>

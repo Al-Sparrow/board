@@ -1,5 +1,10 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+import news
+
+load_dotenv()
+# getenv = os.environ.get
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -9,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=ydod6x#as9&(*86hz5^51uvxbay71p&u+0*n*y9ppt10&3h0v'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -29,19 +34,16 @@ INSTALLED_APPS = [
     'news',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    #'fpages',
-    #'profanity',
     'django_filters',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    #'django_apscheduler',
-
-
+    'django_apscheduler',
     ]
 
 LOGIN_URL = '/accounts/login/'
+LOGOUT_ERL = '/accounts/logout/'
 
 SITE_ID = 1
 
@@ -140,8 +142,15 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # STATICFILES_DIRS = [BASE_DIR/'static']
-4
+
 SITE_URL = 'http://127.0.0.1:8000'
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_POST = 465
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 
 #
 
@@ -154,25 +163,7 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# ACCOUNT_EMAIL_VERIFICATION = "email"
-#
-# ACCOUNT_FORMS = {'signup': 'Profile.forms.BasicSignupForm'}
-#
-# # формат даты, которую будет воспринимать наш задачник (вспоминаем модуль по фильтрам)
-# # APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
-#
-# # если задача не выполняется за 25 секунд, то она автоматически снимается, можете поставить время побольше, но как правило, это сильно бьёт по производительности сервера
-# # APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
-#
-# CELERY_BROKER_URL=f'redis://default:s32JefZYMkTjRdwOwPEVhOECBqXM6SiL@redis-11815.c44.us-east-1-2.ec2.cloud.redislabs.com:11815'
-# CELERY_RESULT_BACKEND=f'redis://default:s32JefZYMkTjRdwOwPEVhOECBqXM6SiL@redis-11815.c44.us-east-1-2.ec2.cloud.redislabs.com:11815'
-# CELERY_ACCEPT_CONTENT = ['application/json']
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_RESULT_SERIALIZER = 'json'
-#
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-#         'LOCATION': os.path.join(BASE_DIR, 'cache_files'), # Указываем, куда будем сохранять кэшируемые файлы! Не забываем создать папку cache_files внутри папки с manage.py!
-#     }
-# }
+
+
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+APSCHEDULER_RUN_NOW_TIMEOUT = 25
